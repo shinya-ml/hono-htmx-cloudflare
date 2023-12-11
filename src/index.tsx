@@ -8,6 +8,8 @@
  * Learn more at https://developers.cloudflare.com/workers/
  */
 import { Hono } from 'hono';
+import { html } from 'hono/html';
+import { jsxRenderer } from 'hono/jsx-renderer';
 
 export interface Env {
 	// Example binding to KV. Learn more at https://developers.cloudflare.com/workers/runtime-apis/kv/
@@ -26,9 +28,25 @@ export interface Env {
 	// MY_QUEUE: Queue;
 }
 
+const renderer = jsxRenderer(({children}) => {
+	return html`
+		<!DOCTYPE html>
+		<html>
+			<head>
+				<script src="https://unpkg.com/htmx.org@1.9.9"></script>
+			</head>
+			<body>
+				${children}
+			</body>
+		</html>
+	`
+})
+
 const app = new Hono<{Bindings: {}}>()
 
-app.get('/', async (c) => {
+app.get('*', renderer)
+app.get('/issues/:id', async (c) => {
+	const id = c.req.param('id')
 	return c.render(
 		<div>
 			<h1>Hello World</h1>
