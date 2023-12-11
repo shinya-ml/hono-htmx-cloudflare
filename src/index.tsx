@@ -7,6 +7,7 @@
  *
  * Learn more at https://developers.cloudflare.com/workers/
  */
+import { Hono } from 'hono';
 
 export interface Env {
 	// Example binding to KV. Learn more at https://developers.cloudflare.com/workers/runtime-apis/kv/
@@ -25,8 +26,14 @@ export interface Env {
 	// MY_QUEUE: Queue;
 }
 
-export default {
-	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-		return new Response('Hello World!');
-	},
-};
+const app = new Hono<{Bindings: {}}>()
+
+app.get('/', async (c) => {
+	return c.render(
+		<div>
+			<h1>Hello World</h1>
+		</div>
+	)
+})
+
+export default app
