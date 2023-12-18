@@ -1,39 +1,66 @@
-import { Hono } from "hono";
-import { html } from "hono/html";
-import { jsxRenderer } from "hono/jsx-renderer";
+import { createServerClient } from "@supabase/ssr";
+import { SupabaseClient } from "@supabase/supabase-js";
+import { Hono, MiddlewareHandler } from "hono";
+import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 
-const renderer = jsxRenderer(({ children }) => {
-	return html`
-		<!DOCTYPE html>
-		<html>
-			<head>
-				<script src="https://unpkg.com/htmx.org@1.9.9"></script>
-			</head>
-			<body>
-				${children}
-			</body>
-		</html>
-	`;
-});
+type Variables = {
+	supabase: SupabaseClient;
+};
 
 const app = new Hono();
+const supabase: MiddlewareHandler<{ Variables: Variables }> = async (
+	c,
+	next,
+) => {
+	const client = createServerClient("supabase url", "anon api key", {
+		cookies: {
+			get: (name) => {
+				return getCookie(c, name);
+			},
+			set: (name, value, options) => {
+				setCookie(c, name, value, options);
+			},
+			remove: (key, options) => {
+				deleteCookie(c, key, options);
+			},
+		},
+		cookieOptions: {
+			httpOnly: true,
+			secure: true,
+		},
+	});
+	c.set("supabase", client);
+	await next();
+};
 
-app.get("*", renderer);
 app.get("/", async (c) => {
 	return c.html(<h1>Hogeeeeeeeee</h1>);
 });
-app.get("/issues/:id", async (c) => {
-	const id = c.req.param("id");
-	const issue = {
-		id: id,
-		title: "記事だお^o^",
-	};
-	return c.render(
-		<div>
-			<h2>ID: {issue.id}</h2>
-			<h1>{issue.title}</h1>
-		</div>,
-	);
+
+app.get("/auth", supabase, async (c) => {
+	const { data, error } = await c.var.supabase.auth.signInWithOAuth({
+		provider: "google",
+		options: {
+			redirectTo: "http://localhost:8787/auth/callback",
+		},
+	});
+	if (error) {
+		return c.json({ error }, 403);
+	}
+
+	return c.json({ data }, 200);
+});
+
+app.get("/auth/callback", supabase, async (c) => {
+	const code = c.req.query("code") ?? "";
+	const next = c.req.query("next") ?? "/";
+	console.log(c.var.supabase.auth.getSession());
+	const { error } = await c.var.supabase.auth.exchangeCodeForSession(code);
+
+	if (!error) {
+		return c.redirect(next);
+	}
+	return c.json({ err: error, msg: "unauthorized" }, 401);
 });
 
 export default app;
