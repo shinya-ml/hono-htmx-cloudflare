@@ -49,8 +49,8 @@ export default function App() {
 
 export function ErrorBoundary() {
   const error = useRouteError();
-  console.error(error);
+  console.log(error);
   return (
-    <div>hogeeeeeeee</div>
+    <div>error</div>
   );
 }
