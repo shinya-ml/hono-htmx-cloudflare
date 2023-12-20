@@ -13,6 +13,8 @@ export function Auth ({children}) {
         onAuthStateChanged(getAuth(), (user) => {
             if (user) {
                 setCurrentUser(user);
+            } else {
+                setCurrentUser(undefined);
             }
         })
     }, [])
