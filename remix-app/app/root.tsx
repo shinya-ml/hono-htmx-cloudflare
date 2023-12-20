@@ -8,6 +8,7 @@ import {
   Scripts,
   ScrollRestoration,
   useLoaderData,
+  useRouteError,
 } from "@remix-run/react";
 import { initializeApp } from "firebase/app";
 import {Auth} from "./auth";
@@ -42,5 +43,13 @@ export default function App() {
         <LiveReload />
       </body>
     </html>
+  );
+}
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+  console.error(error);
+  return (
+    <div>hogeeeeeeee</div>
   );
 }
