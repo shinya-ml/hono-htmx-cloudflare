@@ -1,10 +1,14 @@
 import type { MetaFunction } from "@remix-run/cloudflare";
-import {GoogleAuthProvider, getAuth, onAuthStateChanged,signInWithPopup } from 'firebase/auth'
+import {GoogleAuthProvider, getAuth, signInWithPopup, signOut } from 'firebase/auth'
+import {useAuth} from "../auth"
 
-// Initialize Firebase
 const handleSignIn = () => {
   const provider = new GoogleAuthProvider()
   signInWithPopup(getAuth(), provider)
+}
+
+const handleSignOut = () => {
+  signOut(getAuth())
 }
 
 
@@ -16,17 +20,17 @@ export const meta: MetaFunction = () => {
 };
 
 export default function Index() {
-  onAuthStateChanged(getAuth(), (user) => {
-    if (user) {
-      console.log(user);
-    } else {
-      console.log("no user");
-    }
-  })
+  const user = useAuth();
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
       <h1>Welcome to Remix</h1>
-      <button onClick={handleSignIn}>login</button>
+      {user ?
+      (
+        <div>
+          <button onClick={handleSignOut}>logout</button>
+        </div>) :
+      (<button onClick={handleSignIn}>login</button>)
+      }
     </div>
-  );
+  )
 }

@@ -10,6 +10,7 @@ import {
   useLoaderData,
 } from "@remix-run/react";
 import { initializeApp } from "firebase/app";
+import {Auth} from "./auth";
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
@@ -33,7 +34,9 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <Outlet />
+        <Auth>
+          <Outlet />
+        </Auth>
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
