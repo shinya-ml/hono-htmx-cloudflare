@@ -25,6 +25,7 @@ export const loader: LoaderFunction = async ({context}: LoaderFunctionArgs) => {
 
 export default function App() {
   const firebaseConfig = useLoaderData();
+  console.log(firebaseConfig);
   initializeApp(firebaseConfig);
   return (
     <html lang="en">
