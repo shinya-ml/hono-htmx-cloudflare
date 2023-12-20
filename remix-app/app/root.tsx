@@ -25,6 +25,7 @@ export const loader: LoaderFunction = async ({
 	context,
 }: LoaderFunctionArgs) => {
 	// const config = String(context.env.FIREBASE_CONFIG);
+	console.log(context);
 	const config = '{"hoge": "hoge"}';
 	return JSON.parse(config);
 };
