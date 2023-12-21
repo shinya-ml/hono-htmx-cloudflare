@@ -24,13 +24,13 @@ export const links: LinksFunction = () => [
 export const loader: LoaderFunction = async ({
 	context,
 }: LoaderFunctionArgs) => {
+	console.log(context.FIREBASE_CONFIG);
 	const config = String(context.FIREBASE_CONFIG);
 	return JSON.parse(config);
 };
 
 export default function App() {
 	const firebaseConfig = useLoaderData();
-	console.log(firebaseConfig);
 	initializeApp(firebaseConfig);
 	return (
 		<html lang="en">
