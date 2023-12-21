@@ -23,11 +23,37 @@ export const meta: MetaFunction = () => {
 	];
 };
 
+type Article = {
+	id: number;
+	author: string;
+	title: string;
+	detail: string;
+};
+
 export default function Index() {
 	const user = useAuth();
+	const allArticles: Article[] = [
+		{
+			id: 1,
+			title: "article 1",
+			author: "yanyan",
+			detail: "わーい^^",
+		},
+		{
+			id: 2,
+			title: "article 2",
+			author: "shinya",
+			detail: "ぶーん",
+		},
+	];
 	return (
 		<div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
 			<h1>Welcome to Remix</h1>
+			<div>
+				{allArticles.map((article) => (
+					<div key={article.id}>{article.title}</div>
+				))}
+			</div>
 			{user ? (
 				<div>
 					<button type="button" onClick={handleSignOut}>
