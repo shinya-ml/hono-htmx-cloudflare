@@ -24,7 +24,6 @@ export const links: LinksFunction = () => [
 export const loader: LoaderFunction = async ({
 	context,
 }: LoaderFunctionArgs) => {
-	console.log(context.FIREBASE_CONFIG);
 	const config = String(context.FIREBASE_CONFIG);
 	return JSON.parse(config);
 };
