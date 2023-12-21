@@ -51,7 +51,11 @@ export default function Index() {
 			<h1>Welcome to Remix</h1>
 			<div>
 				{allArticles.map((article) => (
-					<div key={article.id}>{article.title}</div>
+					<div key={article.id}>
+						<div>{article.title}</div>
+						<div>{article.author}</div>
+						<div>{article.detail}</div>
+					</div>
 				))}
 			</div>
 			{user ? (
