@@ -24,9 +24,7 @@ export const links: LinksFunction = () => [
 export const loader: LoaderFunction = async ({
 	context,
 }: LoaderFunctionArgs) => {
-	// const config = String(context.env.FIREBASE_CONFIG);
-	console.log(context);
-	const config = '{"hoge": "hoge"}';
+	const config = String(context.FIREBASE_CONFIG);
 	return JSON.parse(config);
 };
 
