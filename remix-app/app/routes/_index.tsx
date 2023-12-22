@@ -1,4 +1,5 @@
 import type { MetaFunction } from "@remix-run/cloudflare";
+import { useQuery } from "@tanstack/react-query";
 import {
 	GoogleAuthProvider,
 	getAuth,
@@ -31,6 +32,13 @@ type Article = {
 };
 
 export default function Index() {
+	const test = useQuery({
+		queryKey: ["test"],
+		queryFn: async () => {
+			const res = await fetch("http://localhost:8787");
+			return res.json();
+		},
+	});
 	const user = useAuth();
 	const allArticles: Article[] = [
 		{
@@ -49,6 +57,7 @@ export default function Index() {
 	return (
 		<div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
 			<h1>Welcome to Remix</h1>
+			<div>{JSON.stringify(test.data)}</div>
 			<div>
 				{allArticles.map((article) => (
 					<div key={article.id}>

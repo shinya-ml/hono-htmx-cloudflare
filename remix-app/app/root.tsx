@@ -14,6 +14,7 @@ import {
 	useLoaderData,
 	useRouteError,
 } from "@remix-run/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { initializeApp } from "firebase/app";
 import { Auth } from "./auth";
 
@@ -28,6 +29,8 @@ export const loader: LoaderFunction = async ({
 	return JSON.parse(config);
 };
 
+const queryClient = new QueryClient();
+
 export default function App() {
 	const firebaseConfig = useLoaderData();
 	initializeApp(firebaseConfig);
@@ -41,7 +44,9 @@ export default function App() {
 			</head>
 			<body>
 				<Auth>
-					<Outlet />
+					<QueryClientProvider client={queryClient}>
+						<Outlet />
+					</QueryClientProvider>
 				</Auth>
 				<ScrollRestoration />
 				<Scripts />
