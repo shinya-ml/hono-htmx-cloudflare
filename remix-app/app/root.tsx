@@ -14,6 +14,7 @@ import {
 	useLoaderData,
 	useRouteError,
 } from "@remix-run/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { initializeApp } from "firebase/app";
 import { Auth } from "./auth";
 
@@ -24,13 +25,23 @@ export const links: LinksFunction = () => [
 export const loader: LoaderFunction = async ({
 	context,
 }: LoaderFunctionArgs) => {
-	const config = String(context.FIREBASE_CONFIG);
-	return JSON.parse(config);
+	return {
+		FIREBASE_CONFIG: context.FIREBASE_CONFIG,
+		BACKEND_URL: context.BACKEND_URL,
+	};
 };
 
+declare global {
+	interface Window {
+		BACKEND_URL: string;
+	}
+}
+
+const queryClient = new QueryClient();
+
 export default function App() {
-	const firebaseConfig = useLoaderData();
-	initializeApp(firebaseConfig);
+	const env = useLoaderData();
+	initializeApp(JSON.parse(env.FIREBASE_CONFIG));
 	return (
 		<html lang="en">
 			<head>
@@ -41,7 +52,16 @@ export default function App() {
 			</head>
 			<body>
 				<Auth>
-					<Outlet />
+					<QueryClientProvider client={queryClient}>
+						<Outlet />
+						<script
+							dangerouslySetInnerHTML={{
+								__html: `window.BACKEND_URL = ${JSON.stringify(
+									env.BACKEND_URL,
+								)}`,
+							}}
+						/>
+					</QueryClientProvider>
 				</Auth>
 				<ScrollRestoration />
 				<Scripts />
