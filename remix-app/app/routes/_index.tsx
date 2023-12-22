@@ -35,7 +35,7 @@ export default function Index() {
 	const test = useQuery({
 		queryKey: ["test"],
 		queryFn: async () => {
-			const res = await fetch("http://localhost:8787");
+			const res = await fetch(window.BACKEND_URL);
 			return res.json();
 		},
 	});

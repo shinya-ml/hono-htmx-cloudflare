@@ -4,5 +4,6 @@
 declare module "@remix-run/server-runtime" {
 	export interface AppLoadContext {
 		FIREBASE_CONFIG: string;
+		BACKEND_URL: string;
 	}
 }

@@ -10,6 +10,7 @@ export const onRequest = createPagesFunctionHandler({
 	build,
 	getLoadContext: (context) => ({
 		FIREBASE_CONFIG: context.env.FIREBASE_CONFIG,
+		BACKEND_URL: context.env.BACKEND_URL,
 	}),
 	mode: build.mode,
 });
