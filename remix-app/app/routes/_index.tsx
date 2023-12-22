@@ -28,42 +28,32 @@ type Article = {
 	id: number;
 	author: string;
 	title: string;
-	detail: string;
+	content: string;
 };
 
-export default function Index() {
-	const test = useQuery({
-		queryKey: ["test"],
+function useGetAllArticles() {
+	const res = useQuery<Article[]>({
+		queryKey: ["articles"],
 		queryFn: async () => {
-			const res = await fetch(window.BACKEND_URL);
+			const res = await fetch(`${window.BACKEND_URL}/articles`);
 			return res.json();
 		},
 	});
+	return res.data ?? [];
+}
+
+export default function Index() {
 	const user = useAuth();
-	const allArticles: Article[] = [
-		{
-			id: 1,
-			title: "article 1",
-			author: "yanyan",
-			detail: "わーい^^",
-		},
-		{
-			id: 2,
-			title: "article 2",
-			author: "shinya",
-			detail: "ぶーん",
-		},
-	];
+	const allArticles: Article[] = useGetAllArticles();
 	return (
 		<div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
-			<h1>Welcome to Remix</h1>
-			<div>{JSON.stringify(test.data)}</div>
+			<h1>Welcome to Underground...</h1>
 			<div>
 				{allArticles.map((article) => (
 					<div key={article.id}>
 						<div>{article.title}</div>
 						<div>{article.author}</div>
-						<div>{article.detail}</div>
+						<div>{article.content}</div>
 					</div>
 				))}
 			</div>
