@@ -7,6 +7,13 @@ type Bindings = {
 };
 const app = new Hono<{ Bindings: Bindings }>();
 
+function wrapError(e: unknown): Error {
+	if (e instanceof Error) {
+		return e;
+	}
+	return new Error(String(e));
+}
+
 app.use("*", cors());
 app.get("/", (c) => c.json({ message: "Hello World" }, 200));
 
@@ -48,7 +55,7 @@ app.post("/articles", async (c) => {
 			.run();
 		return c.json({ article_id: results[0].article_id }, 201);
 	} catch (e) {
-		return c.json({ error: e.message }, 500);
+		return c.json({ error: wrapError(e).message }, 500);
 	}
 });
 
