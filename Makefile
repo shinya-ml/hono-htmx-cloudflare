@@ -17,3 +17,7 @@ d1-migrate-up:
 QUERY ?= PRAGMA table_list
 d1-exec:
 	$(D1) execute $(DB_NAME) --command '$(QUERY)' --local $(LOCAL)
+
+SEED ?= seed/*
+d1-seed:
+	$(D1) execute $(DB_NAME) --file $(SEED) --local $(LOCAL)
