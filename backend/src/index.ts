@@ -28,5 +28,10 @@ app.get("/articles", (c) => {
 		},
 	]);
 });
+app.post("/articles", async (c) => {
+	const body = await c.req.json();
+	console.log(body);
+	return c.json({ id: 1 }, 201);
+});
 
 export default app;
