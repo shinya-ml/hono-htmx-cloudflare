@@ -42,14 +42,14 @@ app.post("/articles", async (c) => {
 	const body = await c.req.json<Article>();
 	try {
 		const { results } = await c.env.DB.prepare(
-			"INSERT INTO articles (title, content, author_id) VALUES (?1, ?2, ?3)",
+			"INSERT INTO articles (title, content, author_id) VALUES (?1, ?2, ?3) RETURNING article_id",
 		)
 			.bind(body.title, body.content, body.author_id)
 			.run();
+		return c.json({ article_id: results[0].article_id }, 201);
 	} catch (e) {
 		return c.json({ error: e.message }, 500);
 	}
-	return c.json({ id: 1 }, 201);
 });
 
 export default app;
