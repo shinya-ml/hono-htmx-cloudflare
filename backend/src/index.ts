@@ -1,7 +1,11 @@
+import { D1Database } from "@cloudflare/workers-types";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 
-const app = new Hono();
+type Bindings = {
+	DB: D1Database;
+};
+const app = new Hono<{ Bindings: Bindings }>();
 
 app.use("*", cors());
 app.get("/", (c) => c.json({ message: "Hello World" }, 200));
@@ -30,7 +34,12 @@ app.get("/articles", (c) => {
 });
 app.post("/articles", async (c) => {
 	const body = await c.req.json();
-	console.log(body);
+	try {
+		const { results } = await c.env.DB.prepare("PRAGMA table_list").all();
+		console.log(results);
+	} catch (e) {
+		return c.json({ error: e.message }, 500);
+	}
 	return c.json({ id: 1 }, 201);
 });
 
