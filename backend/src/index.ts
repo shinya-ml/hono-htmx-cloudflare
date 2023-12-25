@@ -32,11 +32,20 @@ app.get("/articles", (c) => {
 		},
 	]);
 });
+
+type Article = {
+	title: string;
+	content: string;
+	author_id: number;
+};
 app.post("/articles", async (c) => {
-	const body = await c.req.json();
+	const body = await c.req.json<Article>();
 	try {
-		const { results } = await c.env.DB.prepare("PRAGMA table_list").all();
-		console.log(results);
+		const { results } = await c.env.DB.prepare(
+			"INSERT INTO articles (title, content, author_id) VALUES (?1, ?2, ?3)",
+		)
+			.bind(body.title, body.content, body.author_id)
+			.run();
 	} catch (e) {
 		return c.json({ error: e.message }, 500);
 	}
