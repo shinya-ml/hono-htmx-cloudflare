@@ -1,22 +1,13 @@
 import type { MetaFunction } from "@remix-run/cloudflare";
-import { Link } from "@remix-run/react";
+import { Link, useOutletContext } from "@remix-run/react";
 import { useQuery } from "@tanstack/react-query";
 import {
 	GoogleAuthProvider,
+	User,
 	getAuth,
 	signInWithPopup,
 	signOut,
 } from "firebase/auth";
-import { useAuth } from "../auth";
-
-const handleSignIn = () => {
-	const provider = new GoogleAuthProvider();
-	signInWithPopup(getAuth(), provider);
-};
-
-const handleSignOut = () => {
-	signOut(getAuth());
-};
 
 export const meta: MetaFunction = () => {
 	return [
@@ -42,9 +33,42 @@ function useGetAllArticles() {
 	});
 	return res.data ?? [];
 }
+const handleSignIn = () => {
+	const provider = new GoogleAuthProvider();
+	signInWithPopup(getAuth(), provider);
+};
+const handleSignOut = () => {
+	signOut(getAuth());
+};
+
+function useRegisterMe(firebaseUser: User | null) {
+	console.log("register me!!!!");
+	return useQuery({
+		queryKey: ["me"],
+		queryFn: async () => {
+			if (firebaseUser === null) {
+				return null;
+			}
+			const token = firebaseUser.getIdToken();
+			const res = await fetch(`${window.BACKEND_URL}/me`, {
+				method: "POST",
+				headers: {
+					Authorization: `Bearer ${token}`,
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					name: firebaseUser.displayName,
+					firebase_uid: firebaseUser.uid,
+				}),
+			});
+			return res.json();
+		},
+	});
+}
 
 export default function Index() {
-	const user = useAuth();
+	const user = useOutletContext<User | null>();
+	useRegisterMe(user);
 	const allArticles: Article[] = useGetAllArticles();
 	return (
 		<div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>

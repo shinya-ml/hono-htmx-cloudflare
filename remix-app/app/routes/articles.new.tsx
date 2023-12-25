@@ -19,6 +19,7 @@ export default function NewArticle() {
 			});
 		},
 	});
+
 	return (
 		<div>
 			<Typography mt={2}>新しい記事を作るのぜ</Typography>
