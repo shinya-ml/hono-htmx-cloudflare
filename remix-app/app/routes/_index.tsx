@@ -1,4 +1,5 @@
 import type { MetaFunction } from "@remix-run/cloudflare";
+import { Link } from "@remix-run/react";
 import { useQuery } from "@tanstack/react-query";
 import {
 	GoogleAuthProvider,
@@ -61,6 +62,9 @@ export default function Index() {
 				<div>
 					<button type="button" onClick={handleSignOut}>
 						logout
+					</button>
+					<button type="button">
+						<Link to="/articles/new">New Article</Link>
 					</button>
 				</div>
 			) : (
