@@ -9,7 +9,10 @@ type Bindings = {
 	PUBLIC_JWK_CACHE_KV: KVNamespace;
 	PROJECT_ID: string;
 };
-const app = new Hono<{ Bindings: Bindings }>();
+type Variables = {
+	my_firebase_uid: string;
+};
+const app = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
 function wrapError(e: unknown): Error {
 	if (e instanceof Error) {
@@ -43,6 +46,7 @@ async function authMiddleware(c: Context, next: Next) {
 	);
 	try {
 		const res = await auth.verifyIdToken(token, c.env);
+		c.set("my_firebase_uid", res.uid);
 	} catch (e) {
 		return c.json({ error: wrapError(e).message }, 401);
 	}
@@ -115,15 +119,24 @@ app.get("/articles", (c) => {
 type Article = {
 	title: string;
 	content: string;
-	author_id: number;
 };
-app.post("/articles", async (c) => {
+app.post("/articles", authMiddleware, async (c) => {
 	const body = await c.req.json<Article>();
+	const uid = c.get("my_firebase_uid");
 	try {
+		const me = await c.env.DB.prepare(
+			"select author_id from authors_firebase_info where firebase_uid = ?1",
+		)
+			.bind(uid)
+			.first();
+		if (!me) {
+			return c.json({ error: "author not found" }, 500);
+		}
+		console.log(me);
 		const { results } = await c.env.DB.prepare(
 			"INSERT INTO articles (title, content, author_id) VALUES (?1, ?2, ?3) RETURNING article_id",
 		)
-			.bind(body.title, body.content, body.author_id)
+			.bind(body.title, body.content, me.author_id)
 			.run();
 		return c.json({ article_id: results[0].article_id }, 201);
 	} catch (e) {

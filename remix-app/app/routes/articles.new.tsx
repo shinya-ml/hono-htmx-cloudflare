@@ -15,7 +15,7 @@ export default function NewArticle() {
 					Authorization: `Bearer ${token}`,
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({ title, content, author_id: 1 }),
+				body: JSON.stringify({ title, content }),
 			});
 		},
 	});
