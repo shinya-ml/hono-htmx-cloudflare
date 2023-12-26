@@ -10,6 +10,7 @@ import {
 } from "firebase/auth";
 import { useAuth } from "../auth";
 import { GetAuthTokenButton } from "../components/GetAuthTokenButton";
+import { Header } from "../components/header";
 
 export const meta: MetaFunction = () => {
 	return [
@@ -73,10 +74,9 @@ export default function Index() {
 	const user = useAuth();
 	useRegisterMe(user);
 	const allArticles: Article[] = useGetAllArticles();
-	console.log(allArticles);
 	return (
 		<div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
-			<h1>Welcome to Underground...</h1>
+			<Header user={user} />
 			<div>
 				{allArticles.map((article) => (
 					<div key={article.article_id}>
