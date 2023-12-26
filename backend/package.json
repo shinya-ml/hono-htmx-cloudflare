@@ -4,6 +4,7 @@
     "deploy": "wrangler deploy --minify src/index.ts"
   },
   "dependencies": {
+    "firebase-auth-cloudflare-workers": "^1.1.0",
     "hono": "^3.11.9"
   },
   "devDependencies": {

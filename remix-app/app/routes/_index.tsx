@@ -1,21 +1,15 @@
 import type { MetaFunction } from "@remix-run/cloudflare";
+import { Link } from "@remix-run/react";
 import { useQuery } from "@tanstack/react-query";
 import {
 	GoogleAuthProvider,
+	User,
 	getAuth,
 	signInWithPopup,
 	signOut,
 } from "firebase/auth";
 import { useAuth } from "../auth";
-
-const handleSignIn = () => {
-	const provider = new GoogleAuthProvider();
-	signInWithPopup(getAuth(), provider);
-};
-
-const handleSignOut = () => {
-	signOut(getAuth());
-};
+import { GetAuthTokenButton } from "../components/GetAuthTokenButton";
 
 export const meta: MetaFunction = () => {
 	return [
@@ -41,9 +35,43 @@ function useGetAllArticles() {
 	});
 	return res.data ?? [];
 }
+const handleSignIn = () => {
+	const provider = new GoogleAuthProvider();
+	signInWithPopup(getAuth(), provider);
+};
+const handleSignOut = () => {
+	signOut(getAuth());
+};
+
+function useRegisterMe(firebaseUser: User | null) {
+	console.log("start useregister me ", firebaseUser);
+	const data = useQuery({
+		queryKey: ["me", firebaseUser?.uid],
+		queryFn: async () => {
+			if (firebaseUser === null) {
+				return null;
+			}
+			const token = await firebaseUser.getIdToken();
+			const res = await fetch(`${window.BACKEND_URL}/me`, {
+				method: "POST",
+				headers: {
+					Authorization: `Bearer ${token}`,
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					name: firebaseUser.displayName,
+					firebase_uid: firebaseUser.uid,
+				}),
+			});
+			return res.json();
+		},
+	});
+	return data;
+}
 
 export default function Index() {
 	const user = useAuth();
+	useRegisterMe(user);
 	const allArticles: Article[] = useGetAllArticles();
 	return (
 		<div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
@@ -56,11 +84,15 @@ export default function Index() {
 						<div>{article.content}</div>
 					</div>
 				))}
+				<GetAuthTokenButton user={user} />
 			</div>
 			{user ? (
 				<div>
 					<button type="button" onClick={handleSignOut}>
 						logout
+					</button>
+					<button type="button">
+						<Link to="/articles/new">New Article</Link>
 					</button>
 				</div>
 			) : (

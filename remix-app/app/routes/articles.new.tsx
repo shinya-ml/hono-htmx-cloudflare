@@ -1,20 +1,25 @@
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
+import { getAuth } from "firebase/auth";
 import { useState } from "react";
 
 export default function NewArticle() {
 	const [title, setTitle] = useState("");
 	const [content, setContent] = useState("");
 	const mutation = useMutation({
-		mutationFn: () =>
-			fetch(`${window.BACKEND_URL}/articles`, {
+		mutationFn: async () => {
+			const token = await getAuth().currentUser?.getIdToken();
+			return fetch(`${window.BACKEND_URL}/articles`, {
 				method: "POST",
 				headers: {
+					Authorization: `Bearer ${token}`,
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({ title, content, author_id: 1 }),
-			}),
+				body: JSON.stringify({ title, content }),
+			});
+		},
 	});
+
 	return (
 		<div>
 			<Typography mt={2}>新しい記事を作るのぜ</Typography>

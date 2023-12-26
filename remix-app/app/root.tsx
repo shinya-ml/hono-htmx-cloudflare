@@ -16,7 +16,7 @@ import {
 } from "@remix-run/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { initializeApp } from "firebase/app";
-import { Auth } from "./auth";
+import { AuthProvider } from "./auth";
 
 export const links: LinksFunction = () => [
 	...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
@@ -51,8 +51,8 @@ export default function App() {
 				<Links />
 			</head>
 			<body>
-				<Auth>
-					<QueryClientProvider client={queryClient}>
+				<QueryClientProvider client={queryClient}>
+					<AuthProvider>
 						<Outlet />
 						<script
 							dangerouslySetInnerHTML={{
@@ -61,8 +61,8 @@ export default function App() {
 								)}`,
 							}}
 						/>
-					</QueryClientProvider>
-				</Auth>
+					</AuthProvider>
+				</QueryClientProvider>
 				<ScrollRestoration />
 				<Scripts />
 				<LiveReload />
