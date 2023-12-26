@@ -19,8 +19,8 @@ export const meta: MetaFunction = () => {
 };
 
 type Article = {
-	id: number;
-	author: string;
+	article_id: number;
+	author_id: number;
 	title: string;
 	content: string;
 };
@@ -73,15 +73,16 @@ export default function Index() {
 	const user = useAuth();
 	useRegisterMe(user);
 	const allArticles: Article[] = useGetAllArticles();
+	console.log(allArticles);
 	return (
 		<div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
 			<h1>Welcome to Underground...</h1>
 			<div>
 				{allArticles.map((article) => (
-					<div key={article.id}>
-						<div>{article.title}</div>
-						<div>{article.author}</div>
-						<div>{article.content}</div>
+					<div key={article.article_id}>
+						<div>タイトル: {article.title}</div>
+						<div>著者id: {article.author_id}</div>
+						<div>中身: {article.content}</div>
 					</div>
 				))}
 				<GetAuthTokenButton user={user} />
