@@ -5,8 +5,8 @@ import { cors } from "hono/cors";
 
 type Bindings = {
 	DB: D1Database;
-	FIREBASE_PUBLIC_JWK_CACHE_KEY: string;
-	FIREBASE_PUBLIC_JWK_CACHE_KV: KVNamespace;
+	PUBLIC_JWK_CACHE_KEY: string;
+	PUBLIC_JWK_CACHE_KV: KVNamespace;
 	PROJECT_ID: string;
 };
 const app = new Hono<{ Bindings: Bindings }>();
@@ -37,13 +37,12 @@ async function authMiddleware(c: Context, next: Next) {
 	const auth = Auth.getOrInitialize(
 		c.env.PROJECT_ID,
 		WorkersKVStoreSingle.getOrInitialize(
-			c.env.FIREBASE_PUBLIC_JWK_CACHE_KEY,
-			c.env.FIREBASE_PUBLIC_JWK_CACHE_KV,
+			c.env.PUBLIC_JWK_CACHE_KEY,
+			c.env.PUBLIC_JWK_CACHE_KV,
 		),
 	);
 	try {
-		const res = await auth.verifyIdToken(token);
-		console.log(res);
+		const res = await auth.verifyIdToken(token, c.env);
 	} catch (e) {
 		return c.json({ error: wrapError(e).message }, 401);
 	}
