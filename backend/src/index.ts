@@ -1,9 +1,13 @@
 import { D1Database } from "@cloudflare/workers-types";
-import { Hono } from "hono";
+import { Auth, WorkersKVStoreSingle } from "firebase-auth-cloudflare-workers";
+import { Context, Hono, Next } from "hono";
 import { cors } from "hono/cors";
 
 type Bindings = {
 	DB: D1Database;
+	FIREBASE_PUBLIC_JWK_CACHE_KEY: string;
+	FIREBASE_PUBLIC_JWK_CACHE_KV: KVNamespace;
+	PROJECT_ID: string;
 };
 const app = new Hono<{ Bindings: Bindings }>();
 
@@ -22,6 +26,31 @@ type Author = {
 	name: string;
 	firebase_uid: string;
 };
+
+// check bearer token
+async function authMiddleware(c: Context, next: Next) {
+	const tokenWithBearer = c.req.header("Authorization");
+	if (tokenWithBearer === null || tokenWithBearer === undefined) {
+		return c.json({ error: "Authorization header is not found" }, 400);
+	}
+	const token = tokenWithBearer.replace("Bearer ", "");
+	const auth = Auth.getOrInitialize(
+		c.env.PROJECT_ID,
+		WorkersKVStoreSingle.getOrInitialize(
+			c.env.FIREBASE_PUBLIC_JWK_CACHE_KEY,
+			c.env.FIREBASE_PUBLIC_JWK_CACHE_KV,
+		),
+	);
+	try {
+		const res = await auth.verifyIdToken(token);
+		console.log(res);
+	} catch (e) {
+		return c.json({ error: wrapError(e).message }, 401);
+	}
+	await next();
+}
+// const firebaseApp = initializeApp({});
+app.use("/me", authMiddleware);
 app.post("/me", async (c) => {
 	const body = await c.req.json<Author>();
 	//存在チェック
