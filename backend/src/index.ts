@@ -93,27 +93,12 @@ app.post("/me", async (c) => {
 });
 
 // 記事系
-app.get("/articles", (c) => {
-	return c.json([
-		{
-			id: 1,
-			title: "article 1",
-			author: "yanyan",
-			content: "honoから来た記事だお",
-		},
-		{
-			id: 2,
-			title: "article 2",
-			author: "yanyan",
-			content: "honoから来た記事だお",
-		},
-		{
-			id: 3,
-			title: "article 3",
-			author: "yanyan",
-			content: "honoから来た記事だお",
-		},
-	]);
+app.get("/articles", async (c) => {
+	const res = await c.env.DB.prepare(
+		"SELECT article_id, title, content, author_id FROM articles",
+	).all();
+	console.log(res);
+	return c.json(res.results ?? [], 200);
 });
 
 type Article = {
