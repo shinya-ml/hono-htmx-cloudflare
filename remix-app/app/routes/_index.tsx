@@ -1,13 +1,6 @@
 import type { MetaFunction } from "@remix-run/cloudflare";
-import { Link } from "@remix-run/react";
 import { useQuery } from "@tanstack/react-query";
-import {
-	GoogleAuthProvider,
-	User,
-	getAuth,
-	signInWithPopup,
-	signOut,
-} from "firebase/auth";
+import { User } from "firebase/auth";
 import { useAuth } from "../auth";
 import { GetAuthTokenButton } from "../components/GetAuthTokenButton";
 import { Header } from "../components/header";
@@ -36,13 +29,6 @@ function useGetAllArticles() {
 	});
 	return res.data ?? [];
 }
-const handleSignIn = () => {
-	const provider = new GoogleAuthProvider();
-	signInWithPopup(getAuth(), provider);
-};
-const handleSignOut = () => {
-	signOut(getAuth());
-};
 
 function useRegisterMe(firebaseUser: User | null) {
 	console.log("start useregister me ", firebaseUser);
@@ -87,20 +73,6 @@ export default function Index() {
 				))}
 				<GetAuthTokenButton user={user} />
 			</div>
-			{user ? (
-				<div>
-					<button type="button" onClick={handleSignOut}>
-						logout
-					</button>
-					<button type="button">
-						<Link to="/articles/new">New Article</Link>
-					</button>
-				</div>
-			) : (
-				<button type="button" onClick={handleSignIn}>
-					login
-				</button>
-			)}
 		</div>
 	);
 }
