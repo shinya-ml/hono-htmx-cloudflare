@@ -44,14 +44,14 @@ const handleSignOut = () => {
 };
 
 function useRegisterMe(firebaseUser: User | null) {
-	console.log(firebaseUser);
-	return useQuery({
-		queryKey: ["me"],
+	console.log("start useregister me ", firebaseUser);
+	const data = useQuery({
+		queryKey: ["me", firebaseUser?.uid],
 		queryFn: async () => {
 			if (firebaseUser === null) {
 				return null;
 			}
-			const token = firebaseUser.getIdToken();
+			const token = await firebaseUser.getIdToken();
 			const res = await fetch(`${window.BACKEND_URL}/me`, {
 				method: "POST",
 				headers: {
@@ -66,6 +66,7 @@ function useRegisterMe(firebaseUser: User | null) {
 			return res.json();
 		},
 	});
+	return data;
 }
 
 export default function Index() {
