@@ -1,5 +1,5 @@
 import type { MetaFunction } from "@remix-run/cloudflare";
-import { Link, useOutletContext } from "@remix-run/react";
+import { Link } from "@remix-run/react";
 import { useQuery } from "@tanstack/react-query";
 import {
 	GoogleAuthProvider,
@@ -8,6 +8,7 @@ import {
 	signInWithPopup,
 	signOut,
 } from "firebase/auth";
+import { useAuth } from "../auth";
 import { GetAuthTokenButton } from "../components/GetAuthTokenButton";
 
 export const meta: MetaFunction = () => {
@@ -68,7 +69,7 @@ function useRegisterMe(firebaseUser: User | null) {
 }
 
 export default function Index() {
-	const user = useOutletContext<User | null>();
+	const user = useAuth();
 	useRegisterMe(user);
 	const allArticles: Article[] = useGetAllArticles();
 	return (

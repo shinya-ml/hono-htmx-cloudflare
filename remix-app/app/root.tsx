@@ -16,7 +16,7 @@ import {
 } from "@remix-run/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { initializeApp } from "firebase/app";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { AuthProvider } from "./auth";
 
 export const links: LinksFunction = () => [
 	...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
@@ -42,18 +42,18 @@ const queryClient = new QueryClient();
 export default function App() {
 	const env = useLoaderData();
 	initializeApp(JSON.parse(env.FIREBASE_CONFIG));
-	onAuthStateChanged(getAuth(), (user) => {
-		return (
-			<html lang="en">
-				<head>
-					<meta charSet="utf-8" />
-					<meta name="viewport" content="width=device-width, initial-scale=1" />
-					<Meta />
-					<Links />
-				</head>
-				<body>
-					<QueryClientProvider client={queryClient}>
-						<Outlet context={user} />
+	return (
+		<html lang="en">
+			<head>
+				<meta charSet="utf-8" />
+				<meta name="viewport" content="width=device-width, initial-scale=1" />
+				<Meta />
+				<Links />
+			</head>
+			<body>
+				<QueryClientProvider client={queryClient}>
+					<AuthProvider>
+						<Outlet />
 						<script
 							dangerouslySetInnerHTML={{
 								__html: `window.BACKEND_URL = ${JSON.stringify(
@@ -61,14 +61,14 @@ export default function App() {
 								)}`,
 							}}
 						/>
-					</QueryClientProvider>
-					<ScrollRestoration />
-					<Scripts />
-					<LiveReload />
-				</body>
-			</html>
-		);
-	});
+					</AuthProvider>
+				</QueryClientProvider>
+				<ScrollRestoration />
+				<Scripts />
+				<LiveReload />
+			</body>
+		</html>
+	);
 }
 
 export function ErrorBoundary() {
