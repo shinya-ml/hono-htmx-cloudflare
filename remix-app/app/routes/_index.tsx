@@ -43,13 +43,13 @@ const handleSignOut = () => {
 };
 
 function useRegisterMe(firebaseUser: User | null) {
+	console.log(firebaseUser);
 	return useQuery({
 		queryKey: ["me"],
 		queryFn: async () => {
 			if (firebaseUser === null) {
 				return null;
 			}
-			console.log("register me");
 			const token = firebaseUser.getIdToken();
 			const res = await fetch(`${window.BACKEND_URL}/me`, {
 				method: "POST",
