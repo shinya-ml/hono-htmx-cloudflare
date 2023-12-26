@@ -8,6 +8,7 @@ import {
 	signInWithPopup,
 	signOut,
 } from "firebase/auth";
+import { GetAuthTokenButton } from "~/components/GetAuthTokenButton";
 
 export const meta: MetaFunction = () => {
 	return [
@@ -81,6 +82,7 @@ export default function Index() {
 						<div>{article.content}</div>
 					</div>
 				))}
+				<GetAuthTokenButton user={user} />
 			</div>
 			{user ? (
 				<div>
