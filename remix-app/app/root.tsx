@@ -72,6 +72,9 @@ export default function App() {
 
 export function ErrorBoundary() {
 	const error = useRouteError();
-	console.log(error);
-	return <div>error</div>;
+	if (error instanceof Error) {
+		return <div>{error.message}</div>;
+	}
+	const err = JSON.stringify(error);
+	return <div>{err}</div>;
 }
