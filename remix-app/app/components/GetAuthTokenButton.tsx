@@ -9,6 +9,7 @@ export function GetAuthTokenButton(props: { user: User | null }) {
 	return (
 		<div>
 			<Button
+				color="inherit"
 				onClick={() => {
 					firebaseUser
 						.getIdToken()
