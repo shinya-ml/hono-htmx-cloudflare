@@ -65,7 +65,7 @@ export default function Index() {
 	useRegisterMe(user, backend_url);
 	return (
 		<div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
-			<Box flex-direction="column">
+			<Box flexDirection="column">
 				<Container maxWidth="lg">
 					{allArticles.map((article) => (
 						<div key={article.article_id}>
