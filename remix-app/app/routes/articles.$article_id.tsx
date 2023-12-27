@@ -1,3 +1,4 @@
+import { Box, Typography } from "@mui/material";
 import {
 	ClientLoaderFunctionArgs,
 	isRouteErrorResponse,
@@ -16,14 +17,13 @@ export async function loader({ params }: ClientLoaderFunctionArgs) {
 }
 
 export default function ArticleDetail() {
-	const loader = useLoaderData();
+	const article = useLoaderData().article;
 	return (
-		<div>
-			<div>Article Detail</div>
-			<div>{loader.article.title}</div>
-			<div>{loader.article.content}</div>
-			<div>{loader.article.author_name}</div>
-		</div>
+		<Box>
+			<Typography variant="h4">{article.title}</Typography>
+			<Typography variant="h5">Author: {article.author_name}</Typography>
+			<Typography variant="body1">{article.content}</Typography>
+		</Box>
 	);
 }
 
