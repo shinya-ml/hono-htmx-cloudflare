@@ -15,4 +15,4 @@ jobs:
           workingDirectory: ./backend
           accountId: ${{secrets.CLOUDFLARE_ACCOUNT_ID}}
           apiToken: ${{secrets.CLOUDFLARE_API_TOKEN}}
-          command: deploy --minify src/index.ts
+          command: deploy --minify src/index.ts --compatibility-date 2023-01-01
