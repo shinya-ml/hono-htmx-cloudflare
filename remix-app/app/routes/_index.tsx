@@ -12,9 +12,15 @@ export const meta: MetaFunction = () => {
 	];
 };
 
-export function loader({ context }: LoaderFunctionArgs) {
+export async function loader({ context }: LoaderFunctionArgs) {
+	const fetched = await fetch(`${context.BACKEND_URL}/articles`);
+	if (!fetched.ok) {
+		throw new Response(fetched.body, { status: fetched.status });
+	}
+	const res: Article[] = await fetched.json();
 	return {
-		BACKEND_URL: context.BACKEND_URL,
+		backend_url: context.BACKEND_URL,
+		allArticles: res ?? [],
 	};
 }
 
@@ -24,17 +30,6 @@ type Article = {
 	title: string;
 	content: string;
 };
-
-function useGetAllArticles(backend_url: string) {
-	const res = useQuery<Article[]>({
-		queryKey: ["articles"],
-		queryFn: async () => {
-			const res = await fetch(`${backend_url}/articles`);
-			return res.json();
-		},
-	});
-	return res.data ?? [];
-}
 
 function useRegisterMe(firebaseUser: User | null, backend_url: string) {
 	const data = useQuery({
@@ -62,13 +57,15 @@ function useRegisterMe(firebaseUser: User | null, backend_url: string) {
 }
 
 export default function Index() {
-	const backend_url = useLoaderData().BACKEND_URL;
+	const {
+		backend_url,
+		allArticles,
+	}: { backend_url: string; allArticles: Article[] } = useLoaderData();
 	const user = useAuth();
 	useRegisterMe(user, backend_url);
-	const allArticles: Article[] = useGetAllArticles(backend_url);
 	return (
 		<div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
-			<Box flexDirection="column">
+			<Box flex-direction="column">
 				<Container maxWidth="lg">
 					{allArticles.map((article) => (
 						<div key={article.article_id}>

@@ -2,11 +2,11 @@ import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import {
 	GoogleAuthProvider,
-	User,
 	getAuth,
 	signInWithPopup,
 	signOut,
 } from "firebase/auth";
+import { useAuth } from "../auth";
 
 const darkTheme = createTheme({
 	palette: {
@@ -25,7 +25,8 @@ const handleSignIn = () => {
 const handleSignOut = () => {
 	signOut(getAuth());
 };
-export function Header(props: { user: User | null }) {
+export function Header() {
+	const user = useAuth();
 	return (
 		<ThemeProvider theme={darkTheme}>
 			<Box sx={{ display: "flex" }}>
@@ -34,7 +35,7 @@ export function Header(props: { user: User | null }) {
 						<Typography variant="h4" sx={{ flexGrow: 1 }}>
 							記事アプリ
 						</Typography>
-						{props.user ? (
+						{user ? (
 							<Button onClick={handleSignOut}>Logout</Button>
 						) : (
 							<Button onClick={handleSignIn}>Login</Button>
