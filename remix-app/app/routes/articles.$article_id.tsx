@@ -1,14 +1,14 @@
 import { Box, Typography } from "@mui/material";
+import type { LoaderFunctionArgs } from "@remix-run/cloudflare";
 import {
-	ClientLoaderFunctionArgs,
 	isRouteErrorResponse,
 	useLoaderData,
 	useRouteError,
 } from "@remix-run/react";
 
-export async function loader({ params }: ClientLoaderFunctionArgs) {
+export async function loader({ params, context }: LoaderFunctionArgs) {
 	const res = await fetch(
-		`http://localhost:8787/articles/${params.article_id}`,
+		`${context.BACKEND_URL}/articles/${params.article_id}`,
 	);
 	if (!res.ok) {
 		throw new Response(res.body, { status: res.status });
