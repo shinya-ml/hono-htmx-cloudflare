@@ -97,7 +97,6 @@ app.get("/articles", async (c) => {
 	const res = await c.env.DB.prepare(
 		"SELECT article_id, title, content, author_id FROM articles",
 	).all();
-	console.log(res);
 	return c.json(res.results ?? [], 200);
 });
 
@@ -117,13 +116,28 @@ app.post("/articles", authMiddleware, async (c) => {
 		if (!me) {
 			return c.json({ error: "author not found" }, 500);
 		}
-		console.log(me);
 		const { results } = await c.env.DB.prepare(
 			"INSERT INTO articles (title, content, author_id) VALUES (?1, ?2, ?3) RETURNING article_id",
 		)
 			.bind(body.title, body.content, me.author_id)
 			.run();
 		return c.json({ article_id: results[0].article_id }, 201);
+	} catch (e) {
+		return c.json({ error: wrapError(e).message }, 500);
+	}
+});
+app.get("/articles/:article_id", async (c) => {
+	const article_id = c.req.param("article_id");
+	try {
+		const article = await c.env.DB.prepare(
+			"SELECT title, content, author_name FROM articles INNER JOIN author_profiles USING(author_id) WHERE article_id = ?1",
+		)
+			.bind(article_id)
+			.first();
+		if (article === null) {
+			return c.json({ error: "article not found" }, 404);
+		}
+		return c.json({ article: article }, 200);
 	} catch (e) {
 		return c.json({ error: wrapError(e).message }, 500);
 	}
