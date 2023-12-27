@@ -1,11 +1,9 @@
 import { Box, Container } from "@mui/material";
-import type { MetaFunction } from "@remix-run/cloudflare";
-import { Link } from "@remix-run/react";
+import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/cloudflare";
+import { Link, useLoaderData } from "@remix-run/react";
 import { useQuery } from "@tanstack/react-query";
 import { User } from "firebase/auth";
 import { useAuth } from "../auth";
-import { Footer } from "../components/footer";
-import { Header } from "../components/header";
 
 export const meta: MetaFunction = () => {
 	return [
@@ -14,6 +12,12 @@ export const meta: MetaFunction = () => {
 	];
 };
 
+export function loader({ context }: LoaderFunctionArgs) {
+	return {
+		BACKEND_URL: context.BACKEND_URL,
+	};
+}
+
 type Article = {
 	article_id: number;
 	author_id: number;
@@ -21,19 +25,18 @@ type Article = {
 	content: string;
 };
 
-function useGetAllArticles() {
+function useGetAllArticles(backend_url: string) {
 	const res = useQuery<Article[]>({
 		queryKey: ["articles"],
 		queryFn: async () => {
-			const res = await fetch(`${window.BACKEND_URL}/articles`);
+			const res = await fetch(`${backend_url}/articles`);
 			return res.json();
 		},
 	});
 	return res.data ?? [];
 }
 
-function useRegisterMe(firebaseUser: User | null) {
-	console.log("start useregister me ", firebaseUser);
+function useRegisterMe(firebaseUser: User | null, backend_url: string) {
 	const data = useQuery({
 		queryKey: ["me", firebaseUser?.uid],
 		queryFn: async () => {
@@ -41,7 +44,7 @@ function useRegisterMe(firebaseUser: User | null) {
 				return null;
 			}
 			const token = await firebaseUser.getIdToken();
-			const res = await fetch(`${window.BACKEND_URL}/me`, {
+			const res = await fetch(`${backend_url}/me`, {
 				method: "POST",
 				headers: {
 					Authorization: `Bearer ${token}`,
@@ -59,13 +62,13 @@ function useRegisterMe(firebaseUser: User | null) {
 }
 
 export default function Index() {
+	const backend_url = useLoaderData().BACKEND_URL;
 	const user = useAuth();
-	useRegisterMe(user);
-	const allArticles: Article[] = useGetAllArticles();
+	useRegisterMe(user, backend_url);
+	const allArticles: Article[] = useGetAllArticles(backend_url);
 	return (
 		<div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
-			<Box flex-direction="column">
-				<Header user={user} />
+			<Box flexDirection="column">
 				<Container maxWidth="lg">
 					{allArticles.map((article) => (
 						<div key={article.article_id}>
@@ -77,7 +80,6 @@ export default function Index() {
 						</div>
 					))}
 				</Container>
-				<Footer user={user} />
 			</Box>
 		</div>
 	);
