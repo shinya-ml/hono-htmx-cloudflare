@@ -1,5 +1,6 @@
 import { Box, Container } from "@mui/material";
 import type { MetaFunction } from "@remix-run/cloudflare";
+import { Link } from "@remix-run/react";
 import { useQuery } from "@tanstack/react-query";
 import { User } from "firebase/auth";
 import { useAuth } from "../auth";
@@ -68,7 +69,9 @@ export default function Index() {
 				<Container maxWidth="lg">
 					{allArticles.map((article) => (
 						<div key={article.article_id}>
-							<div>タイトル: {article.title}</div>
+							<Link to={`/articles/${article.article_id}`}>
+								{article.title}{" "}
+							</Link>
 							<div>著者id: {article.author_id}</div>
 							<div>中身: {article.content}</div>
 						</div>
