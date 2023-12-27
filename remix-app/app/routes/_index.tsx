@@ -1,8 +1,9 @@
+import { Box, Container } from "@mui/material";
 import type { MetaFunction } from "@remix-run/cloudflare";
 import { useQuery } from "@tanstack/react-query";
 import { User } from "firebase/auth";
 import { useAuth } from "../auth";
-import { GetAuthTokenButton } from "../components/GetAuthTokenButton";
+import { Footer } from "../components/footer";
 import { Header } from "../components/header";
 
 export const meta: MetaFunction = () => {
@@ -62,17 +63,19 @@ export default function Index() {
 	const allArticles: Article[] = useGetAllArticles();
 	return (
 		<div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
-			<Header user={user} />
-			<div>
-				{allArticles.map((article) => (
-					<div key={article.article_id}>
-						<div>タイトル: {article.title}</div>
-						<div>著者id: {article.author_id}</div>
-						<div>中身: {article.content}</div>
-					</div>
-				))}
-				<GetAuthTokenButton user={user} />
-			</div>
+			<Box flex-direction="column">
+				<Header user={user} />
+				<Container maxWidth="lg">
+					{allArticles.map((article) => (
+						<div key={article.article_id}>
+							<div>タイトル: {article.title}</div>
+							<div>著者id: {article.author_id}</div>
+							<div>中身: {article.content}</div>
+						</div>
+					))}
+				</Container>
+				<Footer user={user} />
+			</Box>
 		</div>
 	);
 }

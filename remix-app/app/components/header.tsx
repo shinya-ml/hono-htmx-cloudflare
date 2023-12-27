@@ -28,8 +28,8 @@ const handleSignOut = () => {
 export function Header(props: { user: User | null }) {
 	return (
 		<ThemeProvider theme={darkTheme}>
-			<Box sx={{ flexGrow: 1 }}>
-				<AppBar position="static">
+			<Box sx={{ display: "flex" }}>
+				<AppBar position="static" sx={{ top: 0, bottom: "auto" }}>
 					<Toolbar>
 						<Typography variant="h4" sx={{ flexGrow: 1 }}>
 							記事アプリ
