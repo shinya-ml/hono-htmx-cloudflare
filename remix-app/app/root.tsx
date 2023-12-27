@@ -57,7 +57,7 @@ export default function App() {
 					<Box flexDirection="column">
 						<AuthProvider>
 							<Header />
-							<Outlet />
+							{/* <Outlet /> */}
 							<Footer />
 						</AuthProvider>
 					</Box>
