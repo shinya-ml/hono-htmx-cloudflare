@@ -17,7 +17,7 @@ import {
 } from "@remix-run/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { initializeApp } from "firebase/app";
-import { AuthProvider } from "./auth";
+import { AuthProvider, useAuth } from "./auth";
 import { Footer } from "./components/footer";
 import { Header } from "./components/header";
 
@@ -44,6 +44,7 @@ const queryClient = new QueryClient();
 export default function App() {
 	const context = useLoaderData();
 	initializeApp(JSON.parse(context.FIREBASE_CONFIG));
+	const user = useAuth();
 	return (
 		<html lang="en">
 			<head>
@@ -58,7 +59,7 @@ export default function App() {
 						<AuthProvider>
 							<Header />
 							<Outlet />
-							<Footer />
+							<Footer user={user} />
 						</AuthProvider>
 					</Box>
 				</QueryClientProvider>
