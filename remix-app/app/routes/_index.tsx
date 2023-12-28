@@ -23,20 +23,7 @@ export async function loader({ context }: LoaderFunctionArgs) {
 		allArticles: res ?? [],
 	};
 }
-// export function loader({ context }: LoaderFunctionArgs) {
-// 	return { backend_url: context.BACKEND_URL };
-// }
 
-// function useGetAllArticles(backend_url: string) {
-// 	const res = useQuery<Article[]>({
-// 		queryKey: ["articles"],
-// 		queryFn: async () => {
-// 			const res = await fetch(`${backend_url}/articles`);
-// 			return res.json();
-// 		},
-// 	});
-// 	return res.data ?? [];
-// }
 type Article = {
 	article_id: number;
 	author_id: number;
