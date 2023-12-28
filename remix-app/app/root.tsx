@@ -57,8 +57,8 @@ export default function App() {
 				<QueryClientProvider client={queryClient}>
 					<Box flexDirection="column">
 						<AuthProvider>
-							<Header />
-							<Outlet />
+							<Header user={user} />
+							<Outlet context={user} />
 							<Footer user={user} />
 						</AuthProvider>
 					</Box>

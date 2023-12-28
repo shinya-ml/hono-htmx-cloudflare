@@ -2,6 +2,7 @@ import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import {
 	GoogleAuthProvider,
+	User,
 	getAuth,
 	signInWithPopup,
 	signOut,
@@ -25,8 +26,9 @@ const handleSignIn = () => {
 const handleSignOut = () => {
 	signOut(getAuth());
 };
-export function Header() {
-	const user = useAuth();
+export function Header(props: { user: User | null }) {
+	// const user = useAuth();
+	const user = props.user;
 	return (
 		<ThemeProvider theme={darkTheme}>
 			<Box sx={{ display: "flex" }}>
