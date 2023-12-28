@@ -1,0 +1,15 @@
+name = "hono-remix-backend"
+compatibility_date = "2023-01-01"
+
+[[kv_namespaces]]
+binding = "PUBLIC_JWK_CACHE_KV"
+id = "41d87dec00d343fbb785f5173071895e"
+
+# [[r2_buckets]]
+# binding = "MY_BUCKET"
+# bucket_name = "my-bucket"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "hono-remix-app"
+database_id = "fbef1803-8788-437d-95e6-7178a90438a9"
