@@ -55,13 +55,13 @@ export default function App() {
 			</head>
 			<body>
 				<QueryClientProvider client={queryClient}>
-					<Box flexDirection="column">
-						<AuthProvider>
+					<AuthProvider>
+						<Box flexDirection="column">
 							<Header user={user} />
 							<Outlet context={user} />
 							<Footer user={user} />
-						</AuthProvider>
-					</Box>
+						</Box>
+					</AuthProvider>
 				</QueryClientProvider>
 				<ScrollRestoration />
 				<Scripts />
